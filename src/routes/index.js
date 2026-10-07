@@ -7,6 +7,7 @@ router.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 router.use("/products", productRoutes);
+router.use("/order", orderRoutes);
 router.use("/orders", orderRoutes);
 
 module.exports = router;

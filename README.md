@@ -26,8 +26,8 @@ En desarrollo se permiten orígenes locales (`localhost`, `127.0.0.1` y `::1`) e
 - `GET /api/v1/products/:id`: obtiene una pizza.
 - `PUT /api/v1/products/:id`: actualiza una pizza.
 - `DELETE /api/v1/products/:id`: elimina una pizza.
-- `POST /api/v1/orders`: crea un pedido (`clientName`, `phoneNumber`, `products` y, opcionalmente, `address`).
-- `GET /api/v1/orders`: lista pedidos y sus productos; requiere JWT de administrador.
+- `POST /api/v1/order`: crea un pedido (`clientName`, `phoneNumber`, `products: [{ productId, quantity }]` y, opcionalmente, `address` y `notes`). El servidor calcula y guarda `total` usando los precios vigentes de los productos.
+- `GET /api/v1/order`: lista pedidos y sus productos; requiere JWT de administrador. `/api/v1/orders` se mantiene como alias.
 - `GET /api/v1/items`: lista elementos.
 - `POST /api/v1/items`: crea un elemento (`name` obligatorio; `description` y `active` opcionales).
 - `GET /api/v1/items/:id`: obtiene un elemento.

@@ -1,14 +1,18 @@
 const { NTFY_URL } = process.env;
 
 // Enviar la notificación vía HTTP POST
-const sendNotification = async () => {
+const sendNotification = async (data) => {
   try {
     const response = await fetch(NTFY_URL, {
       method: "POST",
-      body: "hola",
+      body: `${data.clientName} ha realizado un pedido\n
+telefono: ${data.phoneNumber}\n
+direccion: ${data.address}\n
+comentarios: ${data.notes}\n
+`,
       headers: {
         Title: "¡Nuevo Pedido",
-        Priority: 4,
+        Priority: 5,
         Tags: "pizzeria",
       },
     });
