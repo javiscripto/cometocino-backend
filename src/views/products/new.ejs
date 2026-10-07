@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Administrar pizzas | Cometocino</title>
+    <style>
+      :root { font-family: system-ui, sans-serif; color: #29231f; background: #fffaf4; }
+      body { max-width: 860px; margin: 40px auto; padding: 0 20px; }
+      h1, h2 { color: #8c321f; }
+      form { display: grid; gap: 14px; max-width: 560px; padding: 24px; background: white; border-radius: 12px; box-shadow: 0 4px 20px #40140012; }
+      label { display: grid; gap: 6px; font-weight: 600; }
+      input, textarea { box-sizing: border-box; width: 100%; padding: 10px; border: 1px solid #d8cec3; border-radius: 6px; font: inherit; }
+      button { width: fit-content; padding: 11px 18px; border: 0; border-radius: 6px; background: #a43d24; color: white; font: inherit; font-weight: 700; cursor: pointer; }
+      .message { max-width: 560px; padding: 12px 16px; border-radius: 6px; }
+      .success { background: #e8f5e9; color: #245b2a; }
+      .error { background: #ffebee; color: #8b1e2d; }
+      .products { margin-top: 32px; padding-left: 20px; }
+      .products li { margin: 10px 0; }
+      .products img { width: 48px; height: 48px; margin-right: 8px; object-fit: cover; vertical-align: middle; border-radius: 6px; }
+    </style>
+  </head>
+  <body>
+    <h1>Agregar pizza</h1>
+    <form action="/admin/logout" method="post" style="margin: 0 0 18px; padding: 0; background: none; box-shadow: none;">
+      <button type="submit">Cerrar sesión</button>
+    </form>
+    <% if (created) { %><p class="message success">La pizza se guardó correctamente.</p><% } %>
+    <% if (error) { %><p class="message error"><%= error %></p><% } %>
+    <form action="/admin/products" method="post">
+      <label>Nombre de la pizza
+        <input name="name" value="<%= values.name || '' %>" maxlength="80" required />
+      </label>
+      <label>Precio de venta
+        <input name="salePrice" type="number" min="0" step="1" value="<%= values.salePrice || '' %>" required />
+      </label>
+      <label>Costo de producción
+        <input name="productionCost" type="number" min="0" step="1" value="<%= values.productionCost || '' %>" required />
+      </label>
+      <label>Descripción
+        <textarea name="description" rows="4" maxlength="1000"><%= values.description || '' %></textarea>
+      </label>
+      <label>URL de imagen
+        <input name="imageUrl" type="url" value="<%= values.imageUrl || '' %>" placeholder="https://..." />
+      </label>
+      <button type="submit">Guardar pizza</button>
+    </form>
+
+    <h2>Pizzas registradas</h2>
+    <% if (products.length === 0) { %>
+      <p>Aún no hay pizzas registradas.</p>
+    <% } else { %>
+      <ul class="products">
+        <% products.forEach((product) => { %>
+          <li>
+            <% if (product.imageUrl) { %><img src="<%= product.imageUrl %>" alt="" /><% } %>
+            <strong><%= product.name %></strong> — Venta: $<%= product.salePrice %>, costo: $<%= product.productionCost %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </body>
+</html>

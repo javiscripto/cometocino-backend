@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Acceso administrador | Cometocino</title>
+    <style>
+      :root { font-family: system-ui, sans-serif; color: #29231f; background: #fffaf4; }
+      body { min-height: 100vh; display: grid; place-items: center; margin: 0; padding: 20px; box-sizing: border-box; }
+      main { width: min(100%, 400px); padding: 30px; box-sizing: border-box; background: white; border-radius: 12px; box-shadow: 0 4px 24px #40140015; }
+      h1 { margin-top: 0; color: #8c321f; }
+      form { display: grid; gap: 16px; }
+      label { display: grid; gap: 6px; font-weight: 600; }
+      input { padding: 11px; border: 1px solid #d8cec3; border-radius: 6px; font: inherit; }
+      button { padding: 12px; border: 0; border-radius: 6px; background: #a43d24; color: white; font: inherit; font-weight: 700; cursor: pointer; }
+      .error { padding: 12px; border-radius: 6px; background: #ffebee; color: #8b1e2d; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Panel de administración</h1>
+      <p>Ingresa con la cuenta administradora de la pizzería.</p>
+      <% if (error) { %><p class="error"><%= error %></p><% } %>
+      <form action="/admin/login" method="post">
+        <label>Correo electrónico
+          <input name="email" type="email" autocomplete="username" required />
+        </label>
+        <label>Contraseña
+          <input name="password" type="password" autocomplete="current-password" required />
+        </label>
+        <button type="submit">Iniciar sesión</button>
+      </form>
+    </main>
+  </body>
+</html>
