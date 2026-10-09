@@ -25,6 +25,22 @@ const orderProductSchema = new mongoose.Schema(
   { _id: false },
 );
 
+const ORDER_STATUSES = [
+  "recibido",
+  "en_preparacion",
+  "en_camino",
+  "entregado",
+  "cancelado",
+];
+
+const ORDER_STATUS_LABELS = {
+  recibido: "Pedido recibido",
+  en_preparacion: "En preparación",
+  en_camino: "En camino",
+  entregado: "Entregado",
+  cancelado: "Cancelado",
+};
+
 const orderSchema = new mongoose.Schema(
   {
     clientName: {
@@ -53,6 +69,15 @@ const orderSchema = new mongoose.Schema(
       min: [0, "El total no puede ser negativo"],
       default: 0,
     },
+    status: {
+      type: String,
+      enum: {
+        values: ORDER_STATUSES,
+        message: "El estado '{VALUE}' no es válido",
+      },
+      default: "recibido",
+      index: true,
+    },
     address: {
       // agrega ubicacion con cordenadas obtenidas del navegador
       type: String,
@@ -80,4 +105,8 @@ orderSchema.pre("validate", function calculateTotal() {
   );
 });
 
-module.exports = mongoose.model("Order", orderSchema);
+const Order = mongoose.model("Order", orderSchema);
+Order.ORDER_STATUSES = ORDER_STATUSES;
+Order.ORDER_STATUS_LABELS = ORDER_STATUS_LABELS;
+
+module.exports = Order;

@@ -26,13 +26,11 @@ En desarrollo se permiten orígenes locales (`localhost`, `127.0.0.1` y `::1`) e
 - `GET /api/v1/products/:id`: obtiene una pizza.
 - `PUT /api/v1/products/:id`: actualiza una pizza.
 - `DELETE /api/v1/products/:id`: elimina una pizza.
-- `POST /api/v1/order`: crea un pedido (`clientName`, `phoneNumber`, `products: [{ productId, quantity }]` y, opcionalmente, `address` y `notes`). El servidor calcula y guarda `total` usando los precios vigentes de los productos.
-- `GET /api/v1/order`: lista pedidos y sus productos; requiere JWT de administrador. `/api/v1/orders` se mantiene como alias.
-- `GET /api/v1/items`: lista elementos.
-- `POST /api/v1/items`: crea un elemento (`name` obligatorio; `description` y `active` opcionales).
-- `GET /api/v1/items/:id`: obtiene un elemento.
-- `PUT /api/v1/items/:id`: actualiza un elemento.
-- `DELETE /api/v1/items/:id`: elimina un elemento.
+- `POST /api/v1/orders`: crea un pedido (`clientName`, `phoneNumber`, `products: [{ productId, quantity }]` y, opcionalmente, `address` y `notes`). El pedido se inicializa con `status: "recibido"` y el total se calcula automáticamente. (`/api/v1/order` disponible como alias).
+- `GET /api/v1/orders`: lista pedidos y sus productos; requiere JWT de administrador. Acepta query param `?status=` para filtrar.
+- `GET /api/v1/orders/:id/tracking`: consulta pública de seguimiento para el cliente (`id`, `status`, `statusLabel`, `clientName`, `address`, `notes`, `products`, `total`, `createdAt`, `updatedAt`). `/api/v1/orders/:id/status` disponible como alias.
+- `GET /api/v1/orders/:id`: obtiene el detalle completo del pedido por su ID.
+- `PATCH /api/v1/orders/:id/status`: actualiza el estado del pedido (`recibido`, `en_preparacion`, `en_camino`, `entregado`, `cancelado`) y opcionalmente `orderNotes`; requiere JWT de administrador. (`PATCH /api/v1/orders/:id` disponible como alias).
 
 ## Capas
 
