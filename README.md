@@ -15,8 +15,12 @@ En desarrollo se permiten orígenes locales (`localhost`, `127.0.0.1` y `::1`) e
 ## Rutas
 
 - `GET /api/v1/health`: estado de la API.
-- `GET /admin/products/new`: formulario web para registrar pizzas y ver las registradas.
-- `POST /admin/products`: guarda una pizza enviada desde el formulario.
+- `GET /admin`: redirige a `/admin/orders`.
+- `GET /admin/orders`: panel web de gestión de pedidos con filtro por estados y cambio de estado directo.
+- `POST /admin/orders/:id/status`: actualiza el estado de un pedido desde el formulario del panel.
+- `GET /admin/products`: panel web para registrar pizzas, ver márgenes de ganancia y administrar el catálogo. (`/admin/products/new` disponible como alias).
+- `POST /admin/products`: guarda una pizza enviada desde el formulario web.
+- `POST /admin/products/:id/delete`: elimina una pizza del catálogo desde el panel web.
 - `GET /admin/login`: panel de acceso de administrador.
 - `POST /admin/logout`: cierra la sesión de administrador.
 - `POST /api/v1/auth/login`: inicia sesión con JSON `{ "email", "password" }` y devuelve un JWT.

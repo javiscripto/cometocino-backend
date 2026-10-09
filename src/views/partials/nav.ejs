@@ -1,0 +1,21 @@
+<header class="admin-header">
+  <div class="admin-header-content">
+    <a href="/admin/orders" class="admin-brand">
+      <span class="brand-icon">🥓</span>
+      <span class="brand-text">Cometocino <strong>Admin</strong></span>
+    </a>
+    <nav class="admin-nav">
+      <a href="/admin/orders" class="nav-link <%= typeof activeTab !== 'undefined' && activeTab === 'orders' ? 'active' : '' %>">
+        📋 Pedidos
+      </a>
+      <a href="/admin/products" class="nav-link <%= typeof activeTab !== 'undefined' && activeTab === 'products' ? 'active' : '' %>">
+        🍕 Productos
+      </a>
+    </nav>
+    <div class="admin-user-actions">
+      <form action="/admin/logout" method="post" style="margin: 0; padding: 0; background: none; box-shadow: none;">
+        <button type="submit" class="btn-logout">Cerrar sesión</button>
+      </form>
+    </div>
+  </div>
+</header>

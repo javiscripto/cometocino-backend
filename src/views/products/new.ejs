@@ -3,61 +3,360 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Administrar pizzas | Cometocino</title>
+    <title>Productos | Cometocino Admin</title>
     <style>
-      :root { font-family: system-ui, sans-serif; color: #29231f; background: #fffaf4; }
-      body { max-width: 860px; margin: 40px auto; padding: 0 20px; }
-      h1, h2 { color: #8c321f; }
-      form { display: grid; gap: 14px; max-width: 560px; padding: 24px; background: white; border-radius: 12px; box-shadow: 0 4px 20px #40140012; }
-      label { display: grid; gap: 6px; font-weight: 600; }
-      input, textarea { box-sizing: border-box; width: 100%; padding: 10px; border: 1px solid #d8cec3; border-radius: 6px; font: inherit; }
-      button { width: fit-content; padding: 11px 18px; border: 0; border-radius: 6px; background: #a43d24; color: white; font: inherit; font-weight: 700; cursor: pointer; }
-      .message { max-width: 560px; padding: 12px 16px; border-radius: 6px; }
-      .success { background: #e8f5e9; color: #245b2a; }
-      .error { background: #ffebee; color: #8b1e2d; }
-      .products { margin-top: 32px; padding-left: 20px; }
-      .products li { margin: 10px 0; }
-      .products img { width: 48px; height: 48px; margin-right: 8px; object-fit: cover; vertical-align: middle; border-radius: 6px; }
+      :root {
+        --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        --bg: #fbf7f4;
+        --surface: #ffffff;
+        --primary: #9e2a2b;
+        --primary-hover: #7f1d1d;
+        --text: #29231f;
+        --text-muted: #6e655f;
+        --border: #e6ded7;
+        --shadow: 0 4px 16px rgba(45, 20, 10, 0.06);
+        --radius: 10px;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: var(--font);
+        color: var(--text);
+        background: var(--bg);
+        line-height: 1.5;
+      }
+
+      .admin-header {
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+      .admin-header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .admin-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--primary);
+        text-decoration: none;
+      }
+      .admin-brand strong { color: var(--text); font-weight: 500; font-size: 0.95rem; }
+      .admin-nav { display: flex; gap: 8px; }
+      .nav-link {
+        padding: 8px 16px;
+        border-radius: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+      }
+      .nav-link:hover { background: #f5ebe6; color: var(--primary); }
+      .nav-link.active { background: var(--primary); color: white; }
+      .btn-logout {
+        padding: 7px 14px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: white;
+        color: var(--text-muted);
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-logout:hover { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+
+      main {
+        max-width: 1200px;
+        margin: 28px auto 60px;
+        padding: 0 24px;
+      }
+
+      .page-header {
+        margin-bottom: 24px;
+      }
+      .page-title {
+        margin: 0;
+        font-size: 1.75rem;
+        color: var(--text);
+      }
+
+      .layout-grid {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 32px;
+        align-items: start;
+      }
+
+      @media (max-width: 860px) {
+        .layout-grid { grid-template-columns: 1fr; }
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 24px;
+      }
+      .card-title {
+        margin: 0 0 16px;
+        font-size: 1.2rem;
+        color: var(--primary);
+      }
+
+      /* Formulario */
+      form.form-product {
+        display: grid;
+        gap: 16px;
+      }
+      label {
+        display: grid;
+        gap: 6px;
+        font-weight: 600;
+        font-size: 0.88rem;
+      }
+      input, textarea {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font: inherit;
+        font-size: 0.92rem;
+        background: #fff;
+      }
+      input:focus, textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(158, 42, 43, 0.15);
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .btn-submit {
+        padding: 12px 20px;
+        border: 0;
+        border-radius: 6px;
+        background: var(--primary);
+        color: white;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.15s;
+        margin-top: 6px;
+      }
+      .btn-submit:hover { background: var(--primary-hover); }
+
+      /* Alertas */
+      .alert {
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+      }
+      .alert-success { background: #e8f5e9; color: #1e5627; border: 1px solid #c8e6c9; }
+      .alert-error { background: #ffebee; color: #8e1b24; border: 1px solid #ffcdd2; }
+
+      /* Lista de productos */
+      .products-table-wrapper {
+        overflow-x: auto;
+      }
+      .products-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      .products-table th {
+        text-align: left;
+        padding: 12px 14px;
+        background: #f7f2ed;
+        color: var(--text-muted);
+        font-weight: 600;
+        border-bottom: 1px solid var(--border);
+      }
+      .products-table td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+      }
+      .products-table tr:hover { background: #fdfaf7; }
+
+      .product-thumb {
+        width: 44px;
+        height: 44px;
+        object-fit: cover;
+        border-radius: 6px;
+        background: #ede6df;
+      }
+      .product-info-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .product-name { font-weight: 600; color: var(--text); }
+      .product-desc { font-size: 0.8rem; color: var(--text-muted); max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+      .badge-margin {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        background: #e0f2fe;
+        color: #0369a1;
+      }
+
+      .btn-delete {
+        padding: 6px 10px;
+        background: none;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .btn-delete:hover {
+        background: #fee2e2;
+        border-color: #f87171;
+      }
+
+      .empty-products {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-muted);
+      }
     </style>
   </head>
   <body>
-    <h1>Agregar pizza</h1>
-    <form action="/admin/logout" method="post" style="margin: 0 0 18px; padding: 0; background: none; box-shadow: none;">
-      <button type="submit">Cerrar sesión</button>
-    </form>
-    <% if (created) { %><p class="message success">La pizza se guardó correctamente.</p><% } %>
-    <% if (error) { %><p class="message error"><%= error %></p><% } %>
-    <form action="/admin/products" method="post">
-      <label>Nombre de la pizza
-        <input name="name" value="<%= values.name || '' %>" maxlength="80" required />
-      </label>
-      <label>Precio de venta
-        <input name="salePrice" type="number" min="0" step="1" value="<%= values.salePrice || '' %>" required />
-      </label>
-      <label>Costo de producción
-        <input name="productionCost" type="number" min="0" step="1" value="<%= values.productionCost || '' %>" required />
-      </label>
-      <label>Descripción
-        <textarea name="description" rows="4" maxlength="1000"><%= values.description || '' %></textarea>
-      </label>
-      <label>URL de imagen
-        <input name="imageUrl" type="url" value="<%= values.imageUrl || '' %>" placeholder="https://..." />
-      </label>
-      <button type="submit">Guardar pizza</button>
-    </form>
+    <%- include('../partials/nav', { activeTab: 'products' }) %>
 
-    <h2>Pizzas registradas</h2>
-    <% if (products.length === 0) { %>
-      <p>Aún no hay pizzas registradas.</p>
-    <% } else { %>
-      <ul class="products">
-        <% products.forEach((product) => { %>
-          <li>
-            <% if (product.imageUrl) { %><img src="<%= product.imageUrl %>" alt="" /><% } %>
-            <strong><%= product.name %></strong> — Venta: $<%= product.salePrice %>, costo: $<%= product.productionCost %>
-          </li>
-        <% }) %>
-      </ul>
-    <% } %>
+    <main>
+      <div class="page-header">
+        <h1 class="page-title">Catálogo de Productos</h1>
+        <p style="margin: 4px 0 0; color: var(--text-muted); font-size: 0.95rem;">
+          Registra nuevas pizzas y administra los precios y costos de la carta.
+        </p>
+      </div>
+
+      <% if (created) { %>
+        <div class="alert alert-success">✓ La pizza se registró correctamente.</div>
+      <% } %>
+      <% if (typeof deleted !== 'undefined' && deleted) { %>
+        <div class="alert alert-success">✓ El producto se eliminó del catálogo.</div>
+      <% } %>
+      <% if (error) { %>
+        <div class="alert alert-error">✕ <%= error %></div>
+      <% } %>
+
+      <div class="layout-grid">
+        <!-- Formulario para agregar -->
+        <div class="card">
+          <h2 class="card-title">➕ Nueva Pizza</h2>
+          <form action="/admin/products" method="post" class="form-product">
+            <label>Nombre de la pizza
+              <input name="name" value="<%= values.name || '' %>" maxlength="80" placeholder="Ej: Pizza Bacon Lover" required />
+            </label>
+
+            <div class="form-row">
+              <label>Precio Venta ($)
+                <input name="salePrice" type="number" min="0" step="1" value="<%= values.salePrice || '' %>" placeholder="11990" required />
+              </label>
+              <label>Costo Prod. ($)
+                <input name="productionCost" type="number" min="0" step="1" value="<%= values.productionCost || '' %>" placeholder="4500" required />
+              </label>
+            </div>
+
+            <label>Descripción
+              <textarea name="description" rows="3" maxlength="1000" placeholder="Ingredientes y detalles..."><%= values.description || '' %></textarea>
+            </label>
+
+            <label>URL de imagen (opcional)
+              <input name="imageUrl" type="url" value="<%= values.imageUrl || '' %>" placeholder="https://..." />
+            </label>
+
+            <button type="submit" class="btn-submit">Guardar Pizza</button>
+          </form>
+        </div>
+
+        <!-- Tabla de productos registrados -->
+        <div class="card">
+          <h2 class="card-title">Pizzas en la Carta (<%= products.length %>)</h2>
+          <% if (products.length === 0) { %>
+            <div class="empty-products">
+              <p>Aún no hay productos registrados en el menú.</p>
+            </div>
+          <% } else { %>
+            <div class="products-table-wrapper">
+              <table class="products-table">
+                <thead>
+                  <tr>
+                    <th>Producto</th>
+                    <th>Venta</th>
+                    <th>Costo</th>
+                    <th>Margen</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% products.forEach((product) => { %>
+                    <% const margin = (product.salePrice || 0) - (product.productionCost || 0); %>
+                    <tr>
+                      <td>
+                        <div class="product-info-cell">
+                          <% if (product.imageUrl) { %>
+                            <img src="<%= product.imageUrl %>" alt="<%= product.name %>" class="product-thumb" />
+                          <% } else { %>
+                            <div class="product-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🍕</div>
+                          <% } %>
+                          <div>
+                            <div class="product-name"><%= product.name %></div>
+                            <% if (product.description) { %>
+                              <div class="product-desc" title="<%= product.description %>"><%= product.description %></div>
+                            <% } %>
+                          </div>
+                        </div>
+                      </td>
+                      <td><strong>$<%= Number(product.salePrice).toLocaleString('es-CL') %></strong></td>
+                      <td>$<%= Number(product.productionCost).toLocaleString('es-CL') %></td>
+                      <td>
+                        <span class="badge-margin">+$<%= Number(margin).toLocaleString('es-CL') %></span>
+                      </td>
+                      <td>
+                        <form
+                          action="/admin/products/<%= product._id || product.id %>/delete"
+                          method="post"
+                          onsubmit="return confirm('¿Seguro que deseas eliminar esta pizza?');"
+                          style="margin:0;"
+                        >
+                          <button type="submit" class="btn-delete" title="Eliminar pizza">Eliminar</button>
+                        </form>
+                      </td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </main>
   </body>
 </html>

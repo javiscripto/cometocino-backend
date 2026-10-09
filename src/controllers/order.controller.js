@@ -40,10 +40,42 @@ async function updateOrderStatus(req, res) {
   return res.json({ data: order });
 }
 
+async function showOrdersPage(req, res) {
+  const { status } = req.query;
+  const filter = status && status !== "all" ? { status } : {};
+  const orders = await orderService.listOrders(filter);
+  const Order = require("../models/order.model");
+
+  return res.render("orders/index", {
+    orders,
+    currentStatus: status || "all",
+    statuses: Order.ORDER_STATUSES,
+    statusLabels: Order.ORDER_STATUS_LABELS,
+    updated: req.query.updated === "1",
+    error: req.query.error || null,
+  });
+}
+
+async function submitStatusUpdate(req, res) {
+  try {
+    const { status, orderNotes } = req.body;
+    await orderService.updateOrderStatus(req.params.id, status, orderNotes);
+    const redirectTo = req.query.from || "/admin/orders?updated=1";
+    return res.redirect(303, redirectTo);
+  } catch (error) {
+    return res.redirect(
+      303,
+      "/admin/orders?error=" + encodeURIComponent(error.message),
+    );
+  }
+}
+
 module.exports = {
   createOrder,
   listOrders,
   getOrder,
   getOrderTracking,
   updateOrderStatus,
+  showOrdersPage,
+  submitStatusUpdate,
 };

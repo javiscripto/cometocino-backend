@@ -22,7 +22,7 @@ async function loginPage(req, res) {
     });
   }
   res.cookie("adminToken", result.token, cookieOptions());
-  return res.redirect(303, "/admin/products/new");
+  return res.redirect(303, "/admin/orders");
 }
 
 async function loginApi(req, res) {

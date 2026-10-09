@@ -33,8 +33,9 @@ async function showCreateForm(req, res) {
   return res.render("products/new", {
     products,
     values: {},
-    error: null,
+    error: req.query.error || null,
     created: req.query.created === "1",
+    deleted: req.query.deleted === "1",
   });
 }
 
@@ -47,7 +48,7 @@ async function submitCreateForm(req, res) {
       description: req.body.description,
       imageUrl: req.body.imageUrl,
     });
-    return res.redirect(303, "/admin/products/new?created=1");
+    return res.redirect(303, "/admin/products?created=1");
   } catch (error) {
     const products = await productService.listProducts();
     return res.status(400).render("products/new", {
@@ -55,7 +56,17 @@ async function submitCreateForm(req, res) {
       values: req.body,
       error: error.message,
       created: false,
+      deleted: false,
     });
+  }
+}
+
+async function submitDeleteProduct(req, res) {
+  try {
+    await productService.deleteProduct(req.params.id);
+    return res.redirect(303, "/admin/products?deleted=1");
+  } catch (error) {
+    return res.redirect(303, "/admin/products?error=" + encodeURIComponent(error.message));
   }
 }
 
@@ -67,4 +78,5 @@ module.exports = {
   deleteProduct,
   showCreateForm,
   submitCreateForm,
+  submitDeleteProduct,
 };

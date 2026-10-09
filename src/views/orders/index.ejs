@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pedidos | Cometocino Admin</title>
+    <style>
+      :root {
+        --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        --bg: #fbf7f4;
+        --surface: #ffffff;
+        --primary: #9e2a2b;
+        --primary-hover: #7f1d1d;
+        --text: #29231f;
+        --text-muted: #6e655f;
+        --border: #e6ded7;
+        --shadow: 0 4px 16px rgba(45, 20, 10, 0.06);
+        --radius: 10px;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: var(--font);
+        color: var(--text);
+        background: var(--bg);
+        line-height: 1.5;
+      }
+
+      .admin-header {
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+      .admin-header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .admin-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--primary);
+        text-decoration: none;
+      }
+      .admin-brand strong { color: var(--text); font-weight: 500; font-size: 0.95rem; }
+      .admin-nav {
+        display: flex;
+        gap: 8px;
+      }
+      .nav-link {
+        padding: 8px 16px;
+        border-radius: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+      }
+      .nav-link:hover {
+        background: #f5ebe6;
+        color: var(--primary);
+      }
+      .nav-link.active {
+        background: var(--primary);
+        color: white;
+      }
+      .btn-logout {
+        padding: 7px 14px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: white;
+        color: var(--text-muted);
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-logout:hover {
+        background: #fee2e2;
+        border-color: #fca5a5;
+        color: #991b1b;
+      }
+
+      main {
+        max-width: 1200px;
+        margin: 28px auto 60px;
+        padding: 0 24px;
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .page-title {
+        margin: 0;
+        font-size: 1.75rem;
+        color: var(--text);
+      }
+
+      /* Filtros */
+      .filters-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+        padding: 6px;
+        background: #ede6df;
+        border-radius: 10px;
+        width: fit-content;
+      }
+      .filter-btn {
+        padding: 7px 14px;
+        border-radius: 7px;
+        text-decoration: none;
+        color: var(--text-muted);
+        font-size: 0.88rem;
+        font-weight: 600;
+        transition: all 0.15s;
+      }
+      .filter-btn:hover {
+        background: rgba(255, 255, 255, 0.6);
+        color: var(--text);
+      }
+      .filter-btn.active {
+        background: white;
+        color: var(--primary);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      }
+
+      /* Mensajes */
+      .alert {
+        padding: 12px 18px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 0.92rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .alert-success { background: #e8f5e9; color: #1e5627; border: 1px solid #c8e6c9; }
+      .alert-error { background: #ffebee; color: #8e1b24; border: 1px solid #ffcdd2; }
+
+      /* Lista de pedidos */
+      .orders-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        gap: 20px;
+      }
+
+      .order-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .order-card:hover {
+        box-shadow: 0 6px 20px rgba(45, 20, 10, 0.1);
+      }
+
+      .order-card-header {
+        padding: 16px;
+        background: #fdfaf7;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .order-id-group {
+        display: flex;
+        flex-direction: column;
+      }
+      .order-id {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text);
+      }
+      .order-date {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+      }
+
+      /* Badges de estado */
+      .status-badge {
+        display: inline-block;
+        padding: 5px 11px;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        white-space: nowrap;
+      }
+      .status-recibido { background: #dbeafe; color: #1e40af; }
+      .status-en_preparacion { background: #fef3c7; color: #92400e; }
+      .status-en_camino { background: #f3e8ff; color: #6b21a8; }
+      .status-entregado { background: #d1fae5; color: #065f46; }
+      .status-cancelado { background: #fee2e2; color: #991b1b; }
+
+      .order-card-body {
+        padding: 16px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .client-info {
+        font-size: 0.92rem;
+        background: #f9f5f1;
+        padding: 12px;
+        border-radius: 8px;
+      }
+      .client-info p { margin: 4px 0; }
+      .client-info a { color: var(--primary); text-decoration: none; font-weight: 600; }
+
+      .order-products-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .product-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 0.9rem;
+      }
+      .product-detail {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .product-qty {
+        background: #ede6df;
+        color: var(--text);
+        font-weight: 700;
+        font-size: 0.8rem;
+        padding: 2px 7px;
+        border-radius: 4px;
+      }
+      .product-name {
+        font-weight: 500;
+      }
+      .product-price {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+      }
+
+      .order-notes {
+        background: #fff8e6;
+        border-left: 3px solid #f59e0b;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        color: #78350f;
+        margin: 0;
+      }
+
+      .order-total-row {
+        margin-top: auto;
+        padding-top: 12px;
+        border-top: 1px dashed var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+      .total-label { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; }
+      .total-amount { font-size: 1.35rem; color: var(--primary); font-weight: 800; }
+
+      .order-card-footer {
+        padding: 14px 16px;
+        background: #faf6f2;
+        border-top: 1px solid var(--border);
+      }
+      .status-form {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .status-select {
+        flex: 1;
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font: inherit;
+        font-size: 0.88rem;
+        background: white;
+        cursor: pointer;
+      }
+      .btn-update {
+        padding: 8px 14px;
+        background: var(--primary);
+        color: white;
+        border: 0;
+        border-radius: 6px;
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s;
+        white-space: nowrap;
+      }
+      .btn-update:hover {
+        background: var(--primary-hover);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+      }
+      .empty-state-icon { font-size: 3rem; margin-bottom: 12px; }
+      .empty-state h3 { margin: 0 0 6px; color: var(--text); }
+      .empty-state p { color: var(--text-muted); margin: 0; }
+    </style>
+  </head>
+  <body>
+    <%- include('../partials/nav', { activeTab: 'orders' }) %>
+
+    <main>
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Gestión de Pedidos</h1>
+          <p style="margin: 4px 0 0; color: var(--text-muted); font-size: 0.95rem;">
+            Controla y actualiza los pedidos en tiempo real.
+          </p>
+        </div>
+      </div>
+
+      <% if (updated) { %>
+        <div class="alert alert-success">
+          ✓ El estado del pedido se actualizó correctamente.
+        </div>
+      <% } %>
+
+      <!-- Barra de Filtros -->
+      <nav class="filters-bar" aria-label="Filtro de estados">
+        <a href="/admin/orders" class="filter-btn <%= currentStatus === 'all' ? 'active' : '' %>">
+          Todos (<%= orders.length %>)
+        </a>
+        <% statuses.forEach((st) => { %>
+          <a href="/admin/orders?status=<%= st %>" class="filter-btn <%= currentStatus === st ? 'active' : '' %>">
+            <%= statusLabels[st] || st %>
+          </a>
+        <% }) %>
+      </nav>
+
+      <!-- Grilla de Pedidos -->
+      <% if (orders.length === 0) { %>
+        <div class="empty-state">
+          <div class="empty-state-icon">🍕</div>
+          <h3>No hay pedidos aquí</h3>
+          <p>
+            <% if (currentStatus !== 'all') { %>
+              No se encontraron pedidos con el estado "<%= statusLabels[currentStatus] || currentStatus %>".
+            <% } else { %>
+              Aún no se ha recibido ningún pedido.
+            <% } %>
+          </p>
+        </div>
+      <% } else { %>
+        <div class="orders-grid">
+          <% orders.forEach((order) => { %>
+            <% const currentSt = order.status || 'recibido'; %>
+            <article class="order-card">
+              <div class="order-card-header">
+                <div class="order-id-group">
+                  <span class="order-id">#<%= String(order._id || order.id).slice(-6).toUpperCase() %></span>
+                  <span class="order-date">
+                    <%= new Date(order.createdAt).toLocaleDateString('es-CL', {
+                      day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+                    }) %>
+                  </span>
+                </div>
+                <span class="status-badge status-<%= currentSt %>">
+                  <%= statusLabels[currentSt] || currentSt %>
+                </span>
+              </div>
+
+              <div class="order-card-body">
+                <div class="client-info">
+                  <p><strong>Cliente:</strong> <%= order.clientName %></p>
+                  <p><strong>Teléfono:</strong> <a href="tel:<%= order.phoneNumber %>"><%= order.phoneNumber %></a></p>
+                  <% if (order.address) { %>
+                    <p><strong>Dirección:</strong> <%= order.address %></p>
+                  <% } %>
+                </div>
+
+                <% if (order.notes) { %>
+                  <p class="order-notes"><strong>Nota cliente:</strong> <%= order.notes %></p>
+                <% } %>
+
+                <ul class="order-products-list">
+                  <% (order.products || []).forEach((item) => { %>
+                    <li class="product-item">
+                      <div class="product-detail">
+                        <span class="product-qty"><%= item.quantity %>x</span>
+                        <span class="product-name"><%= item.productId ? item.productId.name : 'Producto' %></span>
+                      </div>
+                      <span class="product-price">$<%= Number(item.unitPrice * item.quantity).toLocaleString('es-CL') %></span>
+                    </li>
+                  <% }) %>
+                </ul>
+
+                <div class="order-total-row">
+                  <span class="total-label">Total a cobrar</span>
+                  <span class="total-amount">$<%= Number(order.total).toLocaleString('es-CL') %></span>
+                </div>
+              </div>
+
+              <div class="order-card-footer">
+                <form
+                  action="/admin/orders/<%= order._id || order.id %>/status?from=<%= encodeURIComponent('/admin/orders' + (currentStatus !== 'all' ? '?status=' + currentStatus : '')) %>"
+                  method="post"
+                  class="status-form"
+                >
+                  <select name="status" class="status-select" aria-label="Cambiar estado del pedido">
+                    <% statuses.forEach((st) => { %>
+                      <option value="<%= st %>" <%= currentSt === st ? 'selected' : '' %>>
+                        <%= statusLabels[st] || st %>
+                      </option>
+                    <% }) %>
+                  </select>
+                  <button type="submit" class="btn-update">Guardar</button>
+                </form>
+              </div>
+            </article>
+          <% }) %>
+        </div>
+      <% } %>
+    </main>
+  </body>
+</html>
