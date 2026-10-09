@@ -1,8 +1,18 @@
 const mongoose = require("mongoose");
 const orderModel = require("../models/order.model");
 const Product = require("../models/product.model");
+const { getStoreStatus } = require("./store-hours.service");
 
 const createOrder = async (data) => {
+  const storeStatus = getStoreStatus();
+  if (!storeStatus.acceptingOrders) {
+    const error = new Error(
+      "Ahora estamos cerrados y no podemos recibir pedidos.",
+    );
+    error.status = 409;
+    throw error;
+  }
+
   if (!Array.isArray(data.products) || data.products.length === 0) {
     const error = new Error("El pedido debe incluir al menos un producto");
     error.status = 400;

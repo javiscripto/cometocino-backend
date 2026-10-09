@@ -15,6 +15,7 @@ En desarrollo se permiten orígenes locales (`localhost`, `127.0.0.1` y `::1`) e
 ## Rutas
 
 - `GET /api/v1/health`: estado de la API.
+- `GET /api/v1/store/status`: informa si la pizzería recibe pedidos según el horario y la zona horaria configurados.
 - `GET /admin`: redirige a `/admin/orders`.
 - `GET /admin/orders`: panel web de gestión de pedidos con filtro por estados y cambio de estado directo.
 - `POST /admin/orders/:id/status`: actualiza el estado de un pedido desde el formulario del panel.
@@ -46,3 +47,5 @@ En desarrollo se permiten orígenes locales (`localhost`, `127.0.0.1` y `::1`) e
 - `src/middlewares`: manejo centralizado de errores.
 
 Las operaciones `POST /api/v1/products`, `PUT /api/v1/products/:id` y `DELETE /api/v1/products/:id` requieren un JWT válido de administrador. Envíalo como `Authorization: Bearer <token>`. El formulario web usa una cookie HttpOnly.
+
+El horario de atención se define en `src/config/store-hours.js` y la zona horaria en `STORE_TIME_ZONE`. El endpoint de creación de pedidos vuelve a validar el horario y responde `409 Conflict` cuando el local está cerrado.
