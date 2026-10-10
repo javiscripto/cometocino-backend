@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Editar Pizza | Cometocino Admin</title>
+    <style>
+      :root {
+        --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        --bg: #fbf7f4;
+        --surface: #ffffff;
+        --primary: #9e2a2b;
+        --primary-hover: #7f1d1d;
+        --text: #29231f;
+        --text-muted: #6e655f;
+        --border: #e6ded7;
+        --shadow: 0 4px 16px rgba(45, 20, 10, 0.06);
+        --radius: 10px;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: var(--font);
+        color: var(--text);
+        background: var(--bg);
+        line-height: 1.5;
+      }
+
+      .admin-header {
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+      .admin-header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .admin-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--primary);
+        text-decoration: none;
+      }
+      .admin-brand strong { color: var(--text); font-weight: 500; font-size: 0.95rem; }
+      .admin-nav { display: flex; gap: 8px; }
+      .nav-link {
+        padding: 8px 16px;
+        border-radius: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+      }
+      .nav-link:hover { background: #f5ebe6; color: var(--primary); }
+      .nav-link.active { background: var(--primary); color: white; }
+      .btn-logout {
+        padding: 7px 14px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: white;
+        color: var(--text-muted);
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .btn-logout:hover { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+
+      main {
+        max-width: 720px;
+        margin: 28px auto 60px;
+        padding: 0 24px;
+      }
+
+      .back-nav {
+        margin-bottom: 20px;
+      }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.92rem;
+        font-weight: 600;
+        transition: color 0.15s;
+      }
+      .back-link:hover {
+        color: var(--primary);
+      }
+
+      .page-header {
+        margin-bottom: 24px;
+      }
+      .page-title {
+        margin: 0;
+        font-size: 1.75rem;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 28px;
+      }
+
+      /* Formulario */
+      form.form-product {
+        display: grid;
+        gap: 18px;
+      }
+      label {
+        display: grid;
+        gap: 6px;
+        font-weight: 600;
+        font-size: 0.88rem;
+      }
+      input, textarea {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font: inherit;
+        font-size: 0.92rem;
+        background: #fff;
+      }
+      input:focus, textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(158, 42, 43, 0.15);
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      @media (max-width: 600px) {
+        .form-row { grid-template-columns: 1fr; }
+      }
+
+      .margin-box {
+        background: #fdf8f4;
+        border: 1px solid var(--border);
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 0.88rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .margin-box strong {
+        font-size: 1.05rem;
+      }
+
+      .image-preview-container {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 12px;
+        background: #faf6f2;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+      .image-preview {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 6px;
+        background: #ede6df;
+      }
+
+      .availability-box {
+        padding: 14px 16px;
+        background: #faf6f2;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+      }
+      .availability-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin: 0;
+      }
+      .availability-checkbox {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--primary);
+        margin: 0;
+        cursor: pointer;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-top: 8px;
+      }
+      .btn-submit {
+        flex: 1;
+        padding: 12px 20px;
+        border: 0;
+        border-radius: 6px;
+        background: var(--primary);
+        color: white;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.15s;
+        text-align: center;
+      }
+      .btn-submit:hover { background: var(--primary-hover); }
+
+      .btn-cancel {
+        padding: 11px 20px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: white;
+        color: var(--text);
+        font: inherit;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background 0.15s;
+        text-align: center;
+      }
+      .btn-cancel:hover { background: #f5ebe6; }
+
+      /* Alertas */
+      .alert {
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+      }
+      .alert-error { background: #ffebee; color: #8e1b24; border: 1px solid #ffcdd2; }
+    </style>
+  </head>
+  <body>
+    <%- include('../partials/nav', { activeTab: 'products' }) %>
+
+    <main>
+      <div class="back-nav">
+        <a href="/admin/products" class="back-link">
+          ← Volver al catálogo de productos
+        </a>
+      </div>
+
+      <div class="page-header">
+        <h1 class="page-title">
+          <span>✏️</span> Editar Pizza: <%= product.name || 'Sin nombre' %>
+        </h1>
+        <p style="margin: 4px 0 0; color: var(--text-muted); font-size: 0.95rem;">
+          Actualiza los datos, costos, precios y disponibilidad en la carta.
+        </p>
+      </div>
+
+      <% if (error) { %>
+        <div class="alert alert-error">✕ <%= error %></div>
+      <% } %>
+
+      <div class="card">
+        <form
+          action="/admin/products/<%= product._id || product.id %>/update"
+          method="post"
+          class="form-product"
+        >
+          <label>Nombre de la pizza
+            <input
+              name="name"
+              value="<%= values.name || '' %>"
+              maxlength="80"
+              placeholder="Ej: Pizza Bacon Lover"
+              required
+            />
+          </label>
+
+          <div class="form-row">
+            <label>Precio Venta ($)
+              <input
+                id="salePrice"
+                name="salePrice"
+                type="number"
+                min="0"
+                step="1"
+                value="<%= values.salePrice !== undefined ? values.salePrice : '' %>"
+                placeholder="11990"
+                required
+              />
+            </label>
+            <label>Costo Prod. ($)
+              <input
+                id="productionCost"
+                name="productionCost"
+                type="number"
+                min="0"
+                step="1"
+                value="<%= values.productionCost !== undefined ? values.productionCost : '' %>"
+                placeholder="4500"
+                required
+              />
+            </label>
+          </div>
+
+          <!-- Indicador de margen calculado dinámicamente -->
+          <div class="margin-box">
+            <span style="color: var(--text-muted);">Margen estimado de ganancia:</span>
+            <strong id="marginAmount" style="color: #0369a1;">$0</strong>
+          </div>
+
+          <label>Descripción
+            <textarea
+              name="description"
+              rows="3"
+              maxlength="1000"
+              placeholder="Ingredientes y detalles..."
+            ><%= values.description || '' %></textarea>
+          </label>
+
+          <label>URL de imagen (opcional)
+            <input
+              id="imageUrlInput"
+              name="imageUrl"
+              type="url"
+              value="<%= values.imageUrl || '' %>"
+              placeholder="https://..."
+            />
+          </label>
+
+          <div
+            id="imagePreviewBox"
+            class="image-preview-container"
+            style="<%= values.imageUrl ? '' : 'display: none;' %>"
+          >
+            <img
+              id="imagePreview"
+              src="<%= values.imageUrl || '' %>"
+              alt="Vista previa"
+              class="image-preview"
+              onerror="this.parentElement.style.display='none';"
+            />
+            <div>
+              <strong style="font-size: 0.88rem; display: block;">Vista previa de imagen</strong>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Se actualizará cuando guardes los cambios</span>
+            </div>
+          </div>
+
+          <div class="availability-box">
+            <label class="availability-label">
+             <select name="active">
+               <option value="true" <%= String(values.active) === 'true' ? 'selected' : '' %>>🍕 Disponible en la carta</option>
+               <option value="false" <%= String(values.active) === 'false' ? 'selected' : '' %>>🚫 No disponible en la carta</option>
+             </select> 
+            </label>
+            <p style="margin: 4px 0 0 28px; font-size: 0.82rem; color: var(--text-muted);">
+              Si desactivas esta opción, la pizza se ocultará o no estará disponible para nuevos pedidos.
+            </p>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-submit">Guardar Cambios</button>
+            <a href="/admin/products" class="btn-cancel">Cancelar</a>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <script>
+      function updateMargin() {
+        const sale = parseFloat(document.getElementById('salePrice').value) || 0;
+        const cost = parseFloat(document.getElementById('productionCost').value) || 0;
+        const margin = sale - cost;
+        const formatted = Math.round(margin).toLocaleString('es-CL');
+        const elem = document.getElementById('marginAmount');
+        if (elem) {
+          elem.textContent = (margin >= 0 ? '+$' : '-$') + formatted.replace('-', '');
+          elem.style.color = margin >= 0 ? '#0369a1' : '#dc2626';
+        }
+      }
+
+      const imageUrlInput = document.getElementById('imageUrlInput');
+      const imagePreviewBox = document.getElementById('imagePreviewBox');
+      const imagePreview = document.getElementById('imagePreview');
+
+      if (imageUrlInput && imagePreview && imagePreviewBox) {
+        imageUrlInput.addEventListener('input', () => {
+          const url = imageUrlInput.value.trim();
+          if (url) {
+            imagePreview.src = url;
+            imagePreviewBox.style.display = 'flex';
+          } else {
+            imagePreviewBox.style.display = 'none';
+          }
+        });
+      }
+
+      document.getElementById('salePrice')?.addEventListener('input', updateMargin);
+      document.getElementById('productionCost')?.addEventListener('input', updateMargin);
+      updateMargin();
+    </script>
+  </body>
+</html>

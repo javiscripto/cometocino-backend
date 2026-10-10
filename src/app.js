@@ -56,6 +56,11 @@ app.post("/admin/orders/:id/status", requireAdmin, orderController.submitStatusU
 app.get("/admin/products", requireAdmin, productController.showCreateForm);
 app.get("/admin/products/new", requireAdmin, productController.showCreateForm);
 app.post("/admin/products", requireAdmin, productController.submitCreateForm);
+app.get("/admin/products/:id/edit", requireAdmin, productController.showEditForm);
+app.get("/admin/products/:id/update", requireAdmin, productController.showEditForm);
+app.post("/admin/products/:id/update", requireAdmin, productController.submitUpdateForm);
+app.post("/admin/products/:id/edit", requireAdmin, productController.submitUpdateForm);
+app.post("/admin/products/:id", requireAdmin, productController.submitUpdateForm);
 app.post("/admin/products/:id/delete", requireAdmin, productController.submitDeleteProduct);
 app.use((req, res) => res.status(404).json({ error: "Ruta no encontrada" }));
 app.use(errorHandler);

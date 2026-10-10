@@ -24,6 +24,7 @@ const productSchema = new mongoose.Schema(
       required: [true, "El costo de producción es obligatorio"],
       min: [0, "El costo de producción no puede ser negativo"],
     },
+    active: { type: Boolean, default: true },
     imageUrl: {
       type: String,
       trim: true,

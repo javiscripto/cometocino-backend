@@ -12,6 +12,7 @@ router
   .route("/:id")
   .get(productController.getProduct)
   .put(requireAdmin, productController.updateProduct)
+  .patch(requireAdmin, productController.updateProduct)
   .delete(requireAdmin, productController.deleteProduct);
 
 module.exports = router;
