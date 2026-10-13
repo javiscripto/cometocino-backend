@@ -48,6 +48,7 @@ app.use("/api/v1/auth", authRoutes);
 app.get("/admin", requireAdmin, (req, res) =>
   res.redirect(303, "/admin/orders"),
 );
+app.get("/", (req, res) => res.redirect("/admin/login"));
 app.get("/admin/login", authController.showLogin);
 app.post("/admin/login", authController.loginPage);
 app.post("/admin/logout", authController.logout);
