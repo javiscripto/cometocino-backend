@@ -13,7 +13,7 @@ const requireAdmin = require("./middlewares/require-admin");
 const app = express();
 app.use(
   cors({
-    origin: "https://frontend-cometocino.vercel.app/pedir-online",
+    origin: "https://frontend-cometocino.vercel.app/",
   }),
 );
 app.options("*", cors());
