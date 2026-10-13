@@ -1,8 +1,5 @@
-// configuracion de vercel
-
 {
   "version": 2,
-  "name": "api-cometocino",
-  "builds": [{ "src": "src/server.js", "use": "@vercel/node" }],
-  "routes": [{ "src": "/(.*)", "dest": "/src/server.js" }]
+  "builds": [{ "src": "src/app.js", "use": "@vercel/node" }],
+  "routes": [{ "src": "/(.*)", "dest": "/src/app.js" }]
 }
