@@ -13,17 +13,7 @@ const requireAdmin = require("./middlewares/require-admin");
 const app = express();
 app.use(
   cors({
-    origin: (origin, callback) => {
-      const allowedPattern = /^https:\/\/frontend-cometocino.*\.vercel\.app$/;
-      if (
-        !origin ||
-        allowedPattern.test(origin) ||
-        origin === "http://localhost:5173"
-      ) {
-        return callback(null, true);
-      }
-      return callback(new Error("Not allowed by CORS"));
-    },
+    origin: "https://frontend-cometocino.vercel.app/pedir-online",
   }),
 );
 app.options("*", cors());
