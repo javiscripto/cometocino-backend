@@ -2,9 +2,15 @@ const { NTFY_URL } = process.env;
 
 // Enviar la notificación vía HTTP POST
 const sendNotification = async (data) => {
+  if (!NTFY_URL) {
+    console.warn("NTFY_URL no está configurada; se omite la notificación.");
+    return;
+  }
+
   try {
     const response = await fetch(NTFY_URL, {
       method: "POST",
+      signal: AbortSignal.timeout(5000),
       body: `${data.clientName} ha realizado un pedido\n
 telefono: ${data.phoneNumber}\n
 direccion: ${data.address}\n

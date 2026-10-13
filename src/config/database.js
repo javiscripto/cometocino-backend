@@ -1,13 +1,7 @@
-const mongoose = require("mongoose");
+const dbConnect = require("../../lib/dbConnect");
 
 async function connectDatabase() {
-  const { MONGODB_URI } = process.env;
-
-  if (!MONGODB_URI) {
-    throw new Error("La variable MONGODB_URI es obligatoria");
-  }
-
-  await mongoose.connect(MONGODB_URI);
+  await dbConnect();
   console.log("db connected");
 }
 

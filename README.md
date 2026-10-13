@@ -9,8 +9,8 @@ API REST inicial construida con Express 5 y MongoDB mediante Mongoose.
 3. Asegúrate de tener MongoDB disponible y ejecuta `npm run dev`. En el primer inicio se crea la cuenta administradora si no existe.
 
 La API queda disponible en `http://localhost:3000`.
-Los archivos ubicados en `src/public` se sirven bajo `/public` (por ejemplo, `src/public/images/logo.png` queda disponible en `/public/images/logo.png`).
-En desarrollo se permiten orígenes locales (`localhost`, `127.0.0.1` y `::1`) en cualquier puerto. Configura `CORS_ORIGINS` con una lista separada por comas para orígenes adicionales. El frontend debe enviar `credentials: "include"` si utiliza la cookie de sesión.
+Los estáticos se ubican en `public/` en la raíz. Por ejemplo, `public/images/5.svg` queda disponible en `/images/5.svg` en Vercel; localmente también se conserva el alias `/public/images/5.svg`.
+En desarrollo se permiten orígenes locales (`localhost`, `127.0.0.1` y `::1`) en cualquier puerto. En producción, configura `CORS_ORIGINS` con los dominios exactos del frontend, separados por comas. El frontend debe enviar `credentials: "include"` si utiliza la cookie de sesión.
 
 ## Rutas
 
@@ -49,3 +49,18 @@ En desarrollo se permiten orígenes locales (`localhost`, `127.0.0.1` y `::1`) e
 Las operaciones `POST /api/v1/products`, `PUT /api/v1/products/:id` y `DELETE /api/v1/products/:id` requieren un JWT válido de administrador. Envíalo como `Authorization: Bearer <token>`. El formulario web usa una cookie HttpOnly.
 
 El horario de atención se define en `src/config/store-hours.js` y la zona horaria en `STORE_TIME_ZONE`. El endpoint de creación de pedidos vuelve a validar el horario y responde `409 Conflict` cuando el local está cerrado.
+
+## Despliegue en Vercel
+
+El proyecto usa `src/server.js` como entrada de Express. `vercel.json` incluye las vistas EJS dentro de la función.
+
+Configura en Vercel estas variables de entorno para Production, Preview y Development según corresponda:
+
+- `MONGODB_URI`: URI de una base MongoDB remota accesible desde Vercel; no uses el valor local `mongodb://127.0.0.1:27017/...` del ejemplo.
+- `JWT_SECRET`: secreto aleatorio de al menos 32 caracteres.
+- `ADMIN_EMAIL` y `ADMIN_PASSWORD`: credenciales iniciales del administrador (contraseña de al menos 12 caracteres).
+- `CORS_ORIGINS`: orígenes exactos del frontend desplegado, por ejemplo `https://mi-frontend.vercel.app`.
+- `STORE_TIME_ZONE`: opcional; por defecto `America/Santiago`.
+- `NTFY_URL`: opcional; sin ella se omiten las notificaciones.
+
+El caché global de `lib/dbConnect.js` reutiliza la conexión y la promesa de conexión durante la vida de cada instancia de Vercel. La duración máxima para seleccionar el servidor MongoDB es de 10 segundos. El proveedor de MongoDB debe permitir conexiones desde la función de Vercel.

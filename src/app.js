@@ -11,36 +11,33 @@ const authController = require("./controllers/auth.controller");
 const requireAdmin = require("./middlewares/require-admin");
 
 const app = express();
-//permitir cors desde cualquier origen
-app.use(cors());
-//
-// const configuredOrigins = (process.env.CORS_ORIGINS || "")
-//   .split(",")
-//   .map((origin) => origin.trim())
-//   .filter(Boolean);
-// const localOriginPattern =
-//   /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/i;
-//
-// app.use(
-//   cors({
-//     origin(origin, callback) {
-//       const isAllowed =
-//         !origin ||
-//         configuredOrigins.includes(origin) ||
-//         (process.env.NODE_ENV !== "production" &&
-//           localOriginPattern.test(origin));
-//       callback(null, isAllowed);
-//     },
-//     credentials: true,
-//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-//     allowedHeaders: ["Content-Type", "Authorization"],
-//     optionsSuccessStatus: 204,
-//   }),
-// );
+const configuredOrigins = (process.env.CORS_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const localOriginPattern = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/i;
+
+const corsOptions = {
+  origin(origin, callback) {
+    const isAllowed =
+      !origin ||
+      configuredOrigins.includes(origin) ||
+      (process.env.NODE_ENV !== "production" && localOriginPattern.test(origin));
+    callback(null, isAllowed);
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use("/public", express.static(path.join(__dirname, "public")));
+const publicDirectory = path.join(__dirname, "..", "public");
+app.use("/public", express.static(publicDirectory));
+app.use(express.static(publicDirectory));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use("/api/v1", apiRoutes);
