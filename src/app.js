@@ -15,14 +15,16 @@ const configuredOrigins = (process.env.CORS_ORIGINS || "")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
-const localOriginPattern = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/i;
+const localOriginPattern =
+  /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/i;
 
 const corsOptions = {
   origin(origin, callback) {
     const isAllowed =
       !origin ||
       configuredOrigins.includes(origin) ||
-      (process.env.NODE_ENV !== "production" && localOriginPattern.test(origin));
+      (process.env.NODE_ENV !== "production" &&
+        localOriginPattern.test(origin));
     callback(null, isAllowed);
   },
   credentials: true,
@@ -31,7 +33,8 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 
-app.use(cors(corsOptions));
+//app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
