@@ -24,7 +24,6 @@ app.use(
       }
       return callback(new Error("Not allowed by CORS"));
     },
-    credentials: true,
   }),
 );
 app.options("*", cors());
