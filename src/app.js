@@ -34,7 +34,13 @@ const corsOptions = {
 };
 
 //app.use(cors(corsOptions));
-app.use(cors());
+app.use(
+  cors({
+    origin:
+      "https://frontend-cometocino-6bdya60ox-javiscriptos-projects.vercel.app/",
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
