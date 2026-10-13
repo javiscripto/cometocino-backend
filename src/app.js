@@ -11,36 +11,24 @@ const authController = require("./controllers/auth.controller");
 const requireAdmin = require("./middlewares/require-admin");
 
 const app = express();
-const configuredOrigins = (process.env.CORS_ORIGINS || "")
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-const localOriginPattern =
-  /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/i;
-
-const corsOptions = {
-  origin(origin, callback) {
-    const isAllowed =
-      !origin ||
-      configuredOrigins.includes(origin) ||
-      (process.env.NODE_ENV !== "production" &&
-        localOriginPattern.test(origin));
-    callback(null, isAllowed);
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  optionsSuccessStatus: 204,
-};
-
-//app.use(cors(corsOptions));
 app.use(
   cors({
-    origin:
-      "https://frontend-cometocino-6bdya60ox-javiscriptos-projects.vercel.app/",
+    origin: (origin, callback) => {
+      const allowedPattern = /^https:\/\/frontend-cometocino.*\.vercel\.app$/;
+      if (
+        !origin ||
+        allowedPattern.test(origin) ||
+        origin === "http://localhost:5173"
+      ) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   }),
 );
+app.options("*", cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
