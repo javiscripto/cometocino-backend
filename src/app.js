@@ -8,6 +8,7 @@ const errorHandler = require("./middlewares/error-handler");
 const productController = require("./controllers/product.controller");
 const orderController = require("./controllers/order.controller");
 const authController = require("./controllers/auth.controller");
+const storeController = require("./controllers/store.controller");
 const requireAdmin = require("./middlewares/require-admin");
 
 const app = express();
@@ -18,7 +19,7 @@ app.use(
 );
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 const publicDirectory = path.join(__dirname, "..", "public");
 app.use("/public", express.static(publicDirectory));
@@ -36,6 +37,8 @@ app.post("/admin/login", authController.loginPage);
 app.post("/admin/logout", authController.logout);
 
 app.get("/admin/orders", requireAdmin, orderController.showOrdersPage);
+app.get("/admin/store-hours", requireAdmin, storeController.showHoursPage);
+app.post("/admin/store-hours", requireAdmin, storeController.submitHoursPage);
 app.post(
   "/admin/orders/:id/status",
   requireAdmin,

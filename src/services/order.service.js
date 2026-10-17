@@ -4,7 +4,7 @@ const Product = require("../models/product.model");
 const { getStoreStatus } = require("./store-hours.service");
 
 const createOrder = async (data) => {
-  const storeStatus = getStoreStatus();
+  const storeStatus = await getStoreStatus();
   if (!storeStatus.acceptingOrders) {
     const error = new Error(
       "Ahora estamos cerrados y no podemos recibir pedidos.",

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Horarios | Cometocino Admin</title>
+    <style>
+      :root { --bg:#fbf7f4; --surface:#fff; --primary:#9e2a2b; --text:#29231f; --muted:#6e655f; --border:#e6ded7; --radius:10px; }
+      * { box-sizing:border-box; }
+      body { margin:0; color:var(--text); background:var(--bg); font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
+      .admin-header { background:#fff; border-bottom:1px solid var(--border); position:sticky; top:0; }
+      .admin-header-content { max-width:1100px; margin:auto; padding:12px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+      .admin-brand { color:var(--primary); font-size:1.2rem; font-weight:700; text-decoration:none; }
+      .admin-brand strong { color:var(--text); font-size:.9rem; font-weight:500; }
+      .admin-nav { display:flex; gap:6px; flex-wrap:wrap; }
+      .nav-link { color:var(--muted); text-decoration:none; font-weight:600; padding:8px 12px; border-radius:8px; }
+      .nav-link:hover,.nav-link.active { background:var(--primary); color:white; }
+      .btn-logout { border:1px solid var(--border); border-radius:6px; background:white; padding:8px 12px; font:inherit; cursor:pointer; }
+      main { max-width:1000px; margin:32px auto 60px; padding:0 24px; }
+      .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; box-shadow:0 4px 16px #2d140a0a; }
+      h1 { margin:0 0 6px; font-size:1.7rem; } .intro { margin:0 0 22px; color:var(--muted); }
+      .notice { padding:12px 14px; margin:0 0 16px; border-radius:8px; }
+      .success { color:#166534; background:#dcfce7; } .error { color:#991b1b; background:#fee2e2; }
+      .table-wrap { overflow-x:auto; }
+      table { width:100%; border-collapse:collapse; min-width:640px; }
+      th,td { padding:13px 10px; text-align:left; border-bottom:1px solid var(--border); }
+      th { color:var(--muted); font-size:.85rem; }
+      td:first-child { font-weight:700; width:130px; }
+      .intervals { display:flex; align-items:center; gap:8px; margin:5px 0; }
+      input[type="time"] { padding:8px; border:1px solid var(--border); border-radius:6px; font:inherit; }
+      .closed { color:var(--muted); }
+      .actions { display:flex; justify-content:flex-end; margin-top:20px; }
+      .save { border:0; border-radius:8px; color:white; background:var(--primary); padding:11px 18px; font:inherit; font-weight:700; cursor:pointer; }
+      .save:hover { background:#7f1d1d; }
+      @media(max-width:680px) { .admin-header-content { align-items:flex-start; flex-direction:column; padding:12px 16px; } main { padding:0 16px; } .card { padding:18px 14px; } }
+    </style>
+  </head>
+  <body>
+    <%- include('../partials/nav', { activeTab: 'store-hours' }) %>
+    <main>
+      <section class="card">
+        <h1>Horarios de atención</h1>
+        <p class="intro">Configura hasta dos bloques de atención por día. Deja ambos horarios vacíos para indicar que la pizzería está cerrada.</p>
+        <% if (updated) { %><div class="notice success" role="status">Los horarios se guardaron correctamente.</div><% } %>
+        <% if (error) { %><div class="notice error" role="alert"><%= error %></div><% } %>
+        <form action="/admin/store-hours" method="post">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Día</th><th>Bloque 1</th><th>Bloque 2 (opcional)</th></tr></thead>
+              <tbody>
+                <% days.forEach((day) => { const intervals = weeklyHours[day] || []; %>
+                  <tr>
+                    <td><%= dayLabels[day] %></td>
+                    <% [0, 1].forEach((slot) => { const interval = intervals[slot] || {}; %>
+                      <td>
+                        <div class="intervals">
+                          <input type="time" name="weeklyHours[<%= day %>][<%= slot %>][open]" value="<%= interval.open || '' %>" aria-label="Apertura <%= dayLabels[day] %>, bloque <%= slot + 1 %>" />
+                          <span>a</span>
+                          <input type="time" name="weeklyHours[<%= day %>][<%= slot %>][close]" value="<%= interval.close || '' %>" aria-label="Cierre <%= dayLabels[day] %>, bloque <%= slot + 1 %>" />
+                        </div>
+                      </td>
+                    <% }) %>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <div class="actions"><button class="save" type="submit">Guardar horarios</button></div>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
