@@ -35,14 +35,16 @@ const createOrder = async (data) => {
 
     return { productId: product.id, quantity, unitPrice: product.salePrice };
   });
-  const order = await orderModel.create({
-    clientName: data.clientName,
-    phoneNumber: data.phoneNumber,
-    address: data.address,
-    notes: data.notes,
-    status: "recibido",
-    products: orderProducts,
-  });
+  const order = await orderModel
+    .create({
+      clientName: data.clientName,
+      phoneNumber: data.phoneNumber,
+      address: data.address,
+      notes: data.notes,
+      status: "recibido",
+      products: orderProducts,
+    })
+    .lean();
   return order.populate("products.productId", "name salePrice imageUrl");
 };
 

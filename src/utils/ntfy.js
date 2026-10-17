@@ -2,6 +2,7 @@ const { NTFY_URL } = process.env;
 
 // Enviar la notificación vía HTTP POST
 const sendNotification = async (data) => {
+  console.log(data);
   if (!NTFY_URL) {
     console.warn("NTFY_URL no está configurada; se omite la notificación.");
     return;
