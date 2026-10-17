@@ -1,10 +1,10 @@
 <header class="admin-header">
-  <div class="admin-header-content">
+  <div class="admin-header-content container-fluid d-flex align-items-center justify-content-between gap-3">
     <a href="/admin/orders" class="admin-brand">
       <span class="brand-icon">🥓</span>
       <span class="brand-text">Cometocino <strong>Admin</strong></span>
     </a>
-    <nav class="admin-nav">
+    <nav class="admin-nav nav">
       <a href="/admin/orders" class="nav-link <%= typeof activeTab !== 'undefined' && activeTab === 'orders' ? 'active' : '' %>">
         📋 Pedidos
       </a>

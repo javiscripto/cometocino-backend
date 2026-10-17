@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Editar Pizza | Cometocino Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
     <style>
       :root {
         --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -257,11 +258,12 @@
       }
       .alert-error { background: #ffebee; color: #8e1b24; border: 1px solid #ffcdd2; }
     </style>
+    <link rel="stylesheet" href="/css/admin-theme.css" />
   </head>
   <body>
     <%- include('../partials/nav', { activeTab: 'products' }) %>
 
-    <main>
+    <main class="container-fluid">
       <div class="back-nav">
         <a href="/admin/products" class="back-link">
           ← Volver al catálogo de productos
