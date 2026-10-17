@@ -434,6 +434,10 @@
               </div>
 
               <div class="order-card-footer">
+          <div class="btn-delete">
+            
+              <button data-id="<%= order._id || order.id %>" class="btn-delete">Eliminar</button>
+           </div> 
                 <form
                   action="/admin/orders/<%= order._id || order.id %>/status?from=<%= encodeURIComponent('/admin/orders' + (currentStatus !== 'all' ? '?status=' + currentStatus : '')) %>"
                   method="post"
@@ -454,5 +458,6 @@
         </div>
       <% } %>
     </main>
+    <script src="/js/orders.js"></script>
   </body>
 </html>

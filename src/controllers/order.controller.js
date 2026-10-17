@@ -19,6 +19,13 @@ async function getOrder(req, res) {
   return res.json({ data: order });
 }
 
+// delete order
+async function deleteOrder(req, res) {
+  const order = await orderService.deleteOrderById(req.params.id);
+  if (!order) return res.status(404).json({ error: "Pedido no encontrado" });
+  return res.status(204).send();
+}
+
 async function getOrderTracking(req, res) {
   const tracking = await orderService.getOrderTracking(req.params.id);
   if (!tracking) return res.status(404).json({ error: "Pedido no encontrado" });
@@ -74,6 +81,7 @@ module.exports = {
   createOrder,
   listOrders,
   getOrder,
+  deleteOrder,
   getOrderTracking,
   updateOrderStatus,
   showOrdersPage,

@@ -17,6 +17,7 @@ router.get("/:id/status", orderController.getOrderTracking);
 router
   .route("/:id")
   .get(orderController.getOrder)
+  .delete(requireAdmin, orderController.deleteOrder)
   .patch(requireAdmin, orderController.updateOrderStatus);
 
 router.patch("/:id/status", requireAdmin, orderController.updateOrderStatus);

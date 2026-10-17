@@ -65,6 +65,12 @@ const getOrderById = async (id) => {
     .populate("products.productId", "name salePrice imageUrl");
 };
 
+//eliminar order by id
+const deleteOrderById = async (id) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) return null;
+  return orderModel.findByIdAndDelete(id);
+};
+
 const getOrderTracking = async (id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) return null;
   const order = await orderModel
@@ -116,6 +122,7 @@ module.exports = {
   createOrder,
   listOrders,
   getOrderById,
+  deleteOrderById,
   getOrderTracking,
   updateOrderStatus,
 };
