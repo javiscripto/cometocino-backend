@@ -3,8 +3,7 @@ const { sendNotification } = require("../utils/ntfy");
 
 async function createOrder(req, res) {
   const order = await orderService.createOrder(req.body);
-  console.log(order);
-  await sendNotification(req.body);
+  await sendNotification(order.toObject());
   return res.status(201).json({ data: order });
 }
 
