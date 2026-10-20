@@ -2,6 +2,8 @@ const mongoose = require("mongoose");
 const orderModel = require("../models/order.model");
 const Product = require("../models/product.model");
 const { getStoreStatus } = require("./store-hours.service");
+const loyaltyService = require("./loyalty.service");
+const { normalizePhone } = require("../utils/phone");
 
 const createOrder = async (data) => {
   const storeStatus = await getStoreStatus();
@@ -38,6 +40,7 @@ const createOrder = async (data) => {
   const order = await orderModel.create({
     clientName: data.clientName,
     phoneNumber: data.phoneNumber,
+    phoneNormalized: normalizePhone(data.phoneNumber),
     address: data.address,
     notes: data.notes,
     status: "recibido",
@@ -80,6 +83,9 @@ const getOrderTracking = async (id) => {
   if (!order) return null;
 
   const status = order.status || "recibido";
+  const loyalty = await loyaltyService.getProgress(
+    order.phoneNormalized || order.phoneNumber,
+  );
   return {
     id: order.id,
     status,
@@ -89,6 +95,7 @@ const getOrderTracking = async (id) => {
     notes: order.notes,
     products: order.products,
     total: order.total,
+    loyalty,
     createdAt: order.createdAt,
     updatedAt: order.updatedAt,
   };
@@ -105,17 +112,38 @@ const updateOrderStatus = async (id, status, orderNotes) => {
     throw error;
   }
 
-  const updateData = { status };
-  if (typeof orderNotes === "string") {
-    updateData.orderNotes = orderNotes;
-  }
+  const session = await mongoose.startSession();
+  try {
+    let updatedOrder = null;
+    await session.withTransaction(async () => {
+      const order = await orderModel.findById(id).session(session);
+      if (!order) return;
 
-  return orderModel
-    .findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true,
-    })
-    .populate("products.productId", "name salePrice imageUrl");
+      const confirmsPayment =
+        order.status === "recibido" &&
+        status === "en_preparacion" &&
+        !order.loyaltyCountedAt;
+
+      order.status = status;
+      if (typeof orderNotes === "string") order.orderNotes = orderNotes;
+      if (confirmsPayment) order.loyaltyCountedAt = new Date();
+      await order.save({ session });
+
+      if (confirmsPayment) {
+        await loyaltyService.recordCompletedPurchase(
+          order.phoneNormalized || order.phoneNumber,
+          session,
+        );
+      }
+
+      updatedOrder = order;
+    });
+
+    if (!updatedOrder) return null;
+    return updatedOrder.populate("products.productId", "name salePrice imageUrl");
+  } finally {
+    await session.endSession();
+  }
 };
 
 module.exports = {

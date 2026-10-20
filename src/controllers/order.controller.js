@@ -26,6 +26,7 @@ async function deleteOrder(req, res) {
 }
 
 async function getOrderTracking(req, res) {
+  res.set("Cache-Control", "no-store");
   const tracking = await orderService.getOrderTracking(req.params.id);
   if (!tracking) return res.status(404).json({ error: "Pedido no encontrado" });
   return res.json({ data: tracking });

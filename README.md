@@ -33,9 +33,11 @@ En desarrollo se permiten orígenes locales (`localhost`, `127.0.0.1` y `::1`) e
 - `DELETE /api/v1/products/:id`: elimina una pizza.
 - `POST /api/v1/orders`: crea un pedido (`clientName`, `phoneNumber`, `products: [{ productId, quantity }]` y, opcionalmente, `address` y `notes`). El pedido se inicializa con `status: "recibido"` y el total se calcula automáticamente. (`/api/v1/order` disponible como alias).
 - `GET /api/v1/orders`: lista pedidos y sus productos; requiere JWT de administrador. Acepta query param `?status=` para filtrar.
-- `GET /api/v1/orders/:id/tracking`: consulta pública de seguimiento para el cliente (`id`, `status`, `statusLabel`, `clientName`, `address`, `notes`, `products`, `total`, `createdAt`, `updatedAt`). `/api/v1/orders/:id/status` disponible como alias.
+- `GET /api/v1/orders/:id/tracking`: consulta pública de seguimiento para el cliente (`id`, `status`, `statusLabel`, `clientName`, `address`, `notes`, `products`, `total`, `loyalty`, `createdAt`, `updatedAt`). `loyalty` contiene `completedPurchases`, `totalCompletedPurchases`, `purchasesUntilReward` y `nextPurchaseHasGift`. `/api/v1/orders/:id/status` disponible como alias.
 - `GET /api/v1/orders/:id`: obtiene el detalle completo del pedido por su ID.
 - `PATCH /api/v1/orders/:id/status`: actualiza el estado del pedido (`recibido`, `en_preparacion`, `en_camino`, `entregado`, `cancelado`) y opcionalmente `orderNotes`; requiere JWT de administrador. (`PATCH /api/v1/orders/:id` disponible como alias).
+
+La fidelización acredita una compra cuando el administrador cambia por primera vez una orden de `recibido` a `en_preparacion` (confirmación de pago). Al llegar a cinco compras, el seguimiento indica `nextPurchaseHasGift: true`. Esta actualización usa una transacción MongoDB para guardar el cambio de estado y el conteo juntos; la base debe soportar transacciones (por ejemplo, MongoDB Atlas o un replica set).
 
 ## Capas
 

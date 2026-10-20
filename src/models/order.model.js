@@ -55,6 +55,8 @@ const orderSchema = new mongoose.Schema(
       trim: true,
       maxlength: [12, "el numero no puede superar 12 caracteres"],
     },
+    phoneNormalized: { type: String, trim: true, index: true },
+    loyaltyCountedAt: { type: Date, default: null },
     products: {
       type: [orderProductSchema],
       required: [true, "El pedido debe incluir productos"],
