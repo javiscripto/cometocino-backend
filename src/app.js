@@ -14,7 +14,7 @@ const requireAdmin = require("./middlewares/require-admin");
 const app = express();
 app.use(
   cors({
-    origin: "https://frontend-cometocino.vercel.app",
+    origin: "https://cometocino.vercel.app",
   }),
 );
 
